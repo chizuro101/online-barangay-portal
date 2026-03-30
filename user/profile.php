@@ -1,162 +1,208 @@
 <?php
 
-require_once ('dbConfig.php');
-require_once ('functions.php');
+require_once '../config/config.php';
+require_once '../classes/User.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['session_login'])) {
+    header("Location: " . ROOT_URL . "index.php");
+    exit();
+}
+
+// Handle logout
+if (isset($_GET['logout'])) {
+    $userObj = new User();
+    $userObj->logout();
+    header("Location: http://localhost/xampp/Online_Barangay_Portal-master/Online_Barangay_Portal-master/");
+    exit();
+}
 
 $userObj = new User();
-$database = new Database();
-$db = $database->dbConnection();
+$userProfile = $_SESSION['session_login'];
 
-session_start();
+$pageTitle = 'My Profile - Resident Portal';
 
-if(!isset($_SESSION['session_login']))
-{
-    header("Location: index.php");
-}
+$extra_css = '
+    .page-header {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2);
+    }
 
-if(isset($_GET['logout']))
-{
-    session_destroy();
-    unset($_SESSION);
-    header("Location: index.php");
-}
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
 
+    .content-card h4 {
+        color: #27ae60;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .user-info p {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f8f9fa;
+        color: #2c3e50;
+        margin-bottom: 0;
+    }
+
+    .user-info p:last-child {
+        border-bottom: none;
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #e74c3c;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .footer {
+        background-color: #2c3e50;
+        color: white;
+        padding: 2rem 0;
+        margin-top: 3rem;
+        text-align: center;
+    }
+
+    .footer p {
+        margin-bottom: 0.25rem;
+    }
+';
 
 ?>
+<?php include 'includes/header.php'; ?>
 
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Montseratt Font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,800;1,500&display=swap" rel="stylesheet">
-    
-    <!-- Local CSS -->
-    <link rel="stylesheet" href="stylesheets/user_PersonalInfo.css">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <title>Document</title>
-</head>
-
-<body> 
-
-    <!-- Navbar Markup -->
-    <div>
-        <nav class="navbar navbar-expand-lg mb-5">
-
-            <button class="navbar-toggler navbar-light" type="button" data-toggle="collapse" data-target="#navbar1">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <img src="img/Logo.png" alt="logo" id="nav-img" class="ml-md-5" 
-     style="width: 80px; height: auto; background: transparent; mix-blend-mode: multiply;">
-
-            <div class="navbar-collapse collapse  justify-content-center" id="navbar1">
-                <ul class="navbar-nav">
-
-                    <li class="nav-item pl-3 pr-3 ">
-                        <a class="nav-item nav-link" href="user_Home.php">Home</a>
-                    </li>
-
-                    <li class="nav-item pl-3 pr-3 active">
-                        <a class="nav-link" href="user_PersonalInfo.php">Personal Info</a>
-                    </li>
-                    <li class="nav-item pl-3 pr-3">
-                        <a class="nav-link" href="user_Documents.php">Documents</a>
-                    </li>
-                    <li class="nav-item pl-3 pr-3">
-                        <a class="nav-link" href="user_BarangayOfficials.php">Barangay Officials</a>
-                    </li>
-                    <li class="nav-item pl-3 pr-3">
-                        <a class="nav-link" href="user_Announcements.php">Announcements</a>
-                    </li>
-                    
-                </ul>
-            </div>
-            
-            <a href="user_PersonalInfo.php?logout=true">
-                <button style="font-family: 'Montserrat', sans-serif !important;" class="btn btn-outline-danger logout-btn  mr-md-5" type="button"  id="logout-btn">Logout</button>
-            </a>
-        </nav>
-    </div>
-
-    <?php
-        $resident_id = $_SESSION['session_login']['resident_id'];
-
-        $sql="SELECT * FROM resident_info WHERE resident_id = $resident_id ";
-        $stmt=$userObj->runQuery($sql);
-        $stmt->execute();
-        
-        if($stmt->rowCount()>0)
-        {
-            while($rowUser = $stmt->fetch(PDO::FETCH_ASSOC)){ 
-    ?>
-    
-    <br><br>
-    <div class="row mb-5">
-        <div class="col-6 offset-3 justify-content-center" style="height:120px; border: 1px solid #ef6969;">
-            <div class="row align-items-center justify-content-around">
-                <div class="col-2" >
-                    <img src="./img/Logo.png" width="70px" height="70px" class="m-4" alt="icon">
-                </div>
-                <div class="col-8">
-                    <h5 class="p-0 m-0"> Name: <?php print($rowUser['first_name'] . " " . $rowUser['middle_name']. " " . $rowUser['last_name'])  ?></h5>
-                    <p class="p-0 pt-2 m-0">Resident ID: <?php print($rowUser['resident_id']) ?> </p>
-                </div>
-            </div>
-        </div> 
-               
-    </div>
-    <div class="row m-0">
-
-        <div class="col-4 pl-3 offset-2 align-items-left text-right">
-            <p>First Name</p>
-            <p>Middle Name</p>
-            <p>Last Name</p>
-            <p>Suffix</p>
-            <p>Birthdate</p>
-            <p>Alias</p>
-            <p>Sex</p>
-            <p>Civil Status</p>
-            <p>Mobile Number</p>
-            <p>Email</p>
-            <p>Religion</p>
-            <p>Voter Status</p>
-        </div>
-                    
-        <div class="col-4 pr-3 offsetr-2 align-items-right text-left">
-            <p><?php print($rowUser['first_name'])?></p>
-            <p><?php print($rowUser['middle_name']) ?></p>
-            <p><?php print($rowUser['last_name']) ?></p>
-            <p><?php print($rowUser['suffix']) ?></p>
-            <p><?php print($rowUser['birthday']) ?></p>
-            <p><?php print($rowUser['alias']) ?></p>
-            <p><?php print($rowUser['sex']) ?></p>
-            <p><?php print($rowUser['civil_stat']) ?></p>
-            <p><?php print($rowUser['mobile_no']) ?></p>
-            <p><?php print($rowUser['email']) ?></p>
-            <p><?php print($rowUser['religion']) ?></p>
-            <p><?php print($rowUser['voter_stat']) ?></p>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-user"></i> My Profile</h1>
+            <p>Manage your personal information and account settings</p>
         </div>
     </div>
-    
-    <?php
-        };  };
-    ?>
 
+    <div class="container">
+        <?php
+            $userData = $_SESSION['session_login'];
+            error_log("Profile Debug: Session Data = " . print_r($userData, true));
+
+            if ($userData):
+        ?>
+
+            <div class="row">
+                <!-- Personal Info Card -->
+                <div class="col-md-8">
+                    <div class="content-card">
+                        <h4><i class="fas fa-user"></i> Personal Information</h4>
+                        <div class="user-info">
+                            <p><strong>Full Name:</strong> <?php echo htmlspecialchars($userData['first_name'] . ' ' . $userData['middle_name'] . ' ' . $userData['last_name']); ?></p>
+                            <p><strong>Username:</strong> <?php echo htmlspecialchars($userData['username']); ?></p>
+                            <p><strong>Email:</strong> <?php echo htmlspecialchars($userData['email'] ?? 'Not provided'); ?></p>
+                            <p><strong>Mobile:</strong> <?php echo htmlspecialchars($userData['mobile_no'] ?? 'Not provided'); ?></p>
+                            <p><strong>Address:</strong> <?php echo htmlspecialchars($userData['address'] ?? 'Not provided'); ?></p>
+                            <p><strong>Resident ID:</strong> <?php echo htmlspecialchars($userData['resident_id']); ?></p>
+                            <p><strong>Birthday:</strong> <?php echo date('F d, Y', strtotime($userData['birthday'] ?? '2000-01-01')); ?></p>
+                            <p><strong>Sex:</strong> <?php echo htmlspecialchars($userData['sex'] ?? 'Not specified'); ?></p>
+                            <p><strong>Civil Status:</strong> <?php echo htmlspecialchars($userData['civil_stat'] ?? 'Not specified'); ?></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings Card -->
+                <div class="col-md-4">
+                    <div class="content-card">
+                        <h4><i class="fas fa-cog"></i> Account Settings</h4>
+                        <div class="user-info">
+                            <p><strong>Account Type:</strong> Resident</p>
+                            <p><strong>Member Since:</strong> <?php echo date('F d, Y', strtotime($userData['created_at'] ?? '2024-01-01')); ?></p>
+                            <p><strong>Status:</strong> <span class="badge badge-success">Active</span></p>
+                            <p><strong>Voter Status:</strong> <?php echo htmlspecialchars($userData['voter_stat'] ?? 'Not specified'); ?></p>
+                            <p><strong>Religion:</strong> <?php echo htmlspecialchars($userData['religion'] ?? 'Not specified'); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php else: ?>
+
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h5>User Not Found</h5>
+                <p>The requested user profile could not be found.</p>
+                <a href="dashboard.php" class="back-btn">Back to Dashboard</a>
+            </div>
+
+        <?php endif; ?>
+    </div>
 
     <!-- Footer -->
-    <div class="row m-0 mt-3">
-        <div class="col-12 text-center text-muted">
-            <p class="m-0 pb-3 mt-md-2 mt-sm-2">Brgy. San Antonio, Copyright ©️ 2020 </p>
+    <div class="footer">
+        <div class="container">
+            <p>&copy; <?php echo date('Y'); ?> Barangay Sta. Cruz Viejo. All rights reserved.</p>
+            <p>Powered by Online Barangay Portal System</p>
         </div>
     </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

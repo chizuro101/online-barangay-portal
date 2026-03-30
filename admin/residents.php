@@ -1,26 +1,23 @@
 <?php
 
-require_once ('dbConfig.php');
-require_once ('functions.php');
+require_once '../config/config.php';
+require_once '../classes/User.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['session_login'])) {
+    header("Location: " . ROOT_URL . "index.php");
+    exit();
+}
+
+// Handle logout
+if (isset($_GET['logout'])) {
+    $userObj = new User();
+    $userObj->logout();
+    header("Location: http://localhost/xampp/Online_Barangay_Portal-master/Online_Barangay_Portal-master");
+    exit();
+}
 
 $userObj = new User();
-$database = new Database();
-$db = $database->dbConnection();
-
-session_start();
-
-if(!isset($_SESSION['session_login']))
-{
-    header("Location: index.php");
-}
-
-if(isset($_GET['logout']))
-{
-    session_destroy();
-    unset($_SESSION);
-    header("Location: index.php");
-}
-
 
 ?>
 

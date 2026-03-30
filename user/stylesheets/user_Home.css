@@ -1,0 +1,214 @@
+/* User Dashboard Styles */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: #dc3545 !important;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #f8f9fa !important;
+}
+
+.login-btn {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: white;
+    color: #dc3545;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    border-radius: 0 0 50px 50px;
+    margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+.stats-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card i {
+    font-size: 3rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.stats-card h3 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+    color: #666;
+    font-weight: 500;
+    margin: 0;
+}
+
+.action-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.action-card h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.action-card .btn {
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 500;
+    margin: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-custom {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-primary-custom:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary-custom {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-primary-custom:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.welcome-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.welcome-section h2 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.welcome-section p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-info {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.user-info h3 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.user-info p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.footer p {
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section p {
+        font-size: 1rem;
+    }
+    
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .action-card .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

@@ -3,7 +3,7 @@
 // Application Configuration
 define('APP_NAME', 'Online Barangay Portal');
 define('APP_VERSION', '2.0.0');
-define('APP_URL', 'http://localhost/Online_Barangay_Portal-master/Online_Barangay_Portal-master/');
+define('APP_URL', 'http://localhost/xampp/Online_Barangay_Portal-master/Online_Barangay_Portal-master/');
 
 // Debug Mode
 define('DEBUG_MODE', true);

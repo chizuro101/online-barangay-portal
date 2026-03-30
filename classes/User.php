@@ -28,7 +28,12 @@ class User {
             if ($official && $official['official_password'] === $password) {
                 $_SESSION['session_login'] = $official;
                 $_SESSION['user_type'] = 'admin';
-                return $official['is_captain'] ? 2 : 0; // 2 for captain, 0 for official
+                
+                // Check if this is a captain based on position
+                $isCaptain = strpos(strtolower($official['official_position']), 'chairman') !== false || 
+                           strpos(strtolower($official['official_position']), 'chairwoman') !== false;
+                
+                return $isCaptain ? 2 : 0; // 2 for captain, 0 for official
             }
             
             // Check residents table
@@ -63,14 +68,27 @@ class User {
     
     public function isCaptain($username = null) {
         if ($username === null) {
+            if (!isset($_SESSION['session_login'])) {
+                return false;
+            }
             $username = $_SESSION['session_login']['official_username'] ?? '';
         }
         
+        if (empty($username)) {
+            return false;
+        }
+        
         try {
-            $stmt = $this->db->prepare("SELECT is_captain FROM " . TABLE_OFFICIALS . " WHERE official_username = ?");
+            $stmt = $this->db->prepare("SELECT official_position FROM " . TABLE_OFFICIALS . " WHERE official_username = ?");
             $stmt->execute([$username]);
             $result = $stmt->fetch();
-            return $result && $result['is_captain'] == 1;
+            
+            if ($result) {
+                $position = strtolower($result['official_position']);
+                return strpos($position, 'chairman') !== false || strpos($position, 'chairwoman') !== false;
+            }
+            
+            return false;
         } catch (PDOException $e) {
             error_log("Captain check error: " . $e->getMessage());
             return false;
@@ -78,8 +96,11 @@ class User {
     }
     
     public function logout() {
+        // Unset all session variables
+        $_SESSION = array();
+        
+        // Destroy the session
         session_destroy();
-        unset($_SESSION);
     }
     
     // ==================== RESIDENT MANAGEMENT ====================
@@ -106,6 +127,17 @@ class User {
             return $this->db->insert(TABLE_RESIDENTS, $data);
         } catch (PDOException $e) {
             error_log("Add resident error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function getUserById($resident_id) {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM " . TABLE_RESIDENTS . " WHERE resident_id = ?");
+            $stmt->execute([$resident_id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get user by ID error: " . $e->getMessage());
             return false;
         }
     }
@@ -210,13 +242,24 @@ class User {
     
     // ==================== ANNOUNCEMENT MANAGEMENT ====================
     
-    public function add_post($post_title, $post_body, $post_date_time) {
+    public function add_post($post_title, $post_body, $post_date_time, $post_image = null, $author_id = null, $author_type = null) {
         try {
             $data = [
                 'post_title' => $post_title,
                 'post_body' => $post_body,
                 'post_date_time' => $post_date_time
             ];
+            
+            // Add optional fields if provided
+            if ($post_image !== null) {
+                $data['post_image'] = $post_image;
+            }
+            if ($author_id !== null) {
+                $data['author_id'] = $author_id;
+            }
+            if ($author_type !== null) {
+                $data['author_type'] = $author_type;
+            }
             
             return $this->db->insert(TABLE_ANNOUNCEMENTS, $data);
         } catch (PDOException $e) {
@@ -240,6 +283,41 @@ class User {
         }
     }
     
+    public function edit_announcement($post_id, $post_title, $post_body, $post_date_time, $post_image = null, $author_id = null, $author_type = null) {
+        try {
+            $data = [
+                'post_title' => $post_title,
+                'post_body' => $post_body,
+                'post_date_time' => $post_date_time
+            ];
+            
+            // Add optional fields if provided
+            if ($post_image !== null) {
+                $data['post_image'] = $post_image;
+            }
+            if ($author_id !== null) {
+                $data['author_id'] = $author_id;
+            }
+            if ($author_type !== null) {
+                $data['author_type'] = $author_type;
+            }
+            
+            return $this->db->update(TABLE_ANNOUNCEMENTS, $data, 'post_id = ?', [$post_id]);
+        } catch (PDOException $e) {
+            error_log("Edit announcement error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function delete_announcement($post_id) {
+        try {
+            return $this->db->delete(TABLE_ANNOUNCEMENTS, 'post_id = ?', [$post_id]);
+        } catch (PDOException $e) {
+            error_log("Delete announcement error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
     public function delete_post($post_id) {
         try {
             return $this->db->delete(TABLE_ANNOUNCEMENTS, 'post_id = ?', [$post_id]);
@@ -251,15 +329,22 @@ class User {
     
     // ==================== DOCUMENT MANAGEMENT ====================
     
-    public function upload_documents($doc_name, $doc_type, $doc_file) {
+    public function upload_documents($file, $destination, $filename, $description, $date_time, $directory) {
         try {
-            $data = [
-                'doc_name' => $doc_name,
-                'doc_type' => $doc_type,
-                'doc_file' => $doc_file
-            ];
-            
-            return $this->db->insert(TABLE_DOCUMENTS, $data);
+            // Move the uploaded file
+            if (move_uploaded_file($file, $destination)) {
+                $data = [
+                    'name' => $filename,
+                    'description' => $description,
+                    'upload_date_time' => $date_time,
+                    'directory' => $directory
+                ];
+                
+                return $this->db->insert(TABLE_DOCUMENTS, $data);
+            } else {
+                error_log("Failed to move uploaded file from $file to $destination");
+                return false;
+            }
         } catch (PDOException $e) {
             error_log("Upload document error: " . $e->getMessage());
             return false;
@@ -268,9 +353,23 @@ class User {
     
     public function delete_document($doc_id) {
         try {
-            return $this->db->delete(TABLE_DOCUMENTS, 'doc_id = ?', [$doc_id]);
+            return $this->db->delete(TABLE_DOCUMENTS, 'id = ?', [$doc_id]);
         } catch (PDOException $e) {
             error_log("Delete document error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    public function delete_document_file($filename) {
+        try {
+            // Try to delete the file from storage
+            $file_path = '../storage/uploads/documents/' . $filename;
+            if (file_exists($file_path)) {
+                return unlink($file_path);
+            }
+            return true; // File doesn't exist, consider it deleted
+        } catch (Exception $e) {
+            error_log("Delete document file error: " . $e->getMessage());
             return false;
         }
     }
@@ -306,7 +405,7 @@ class User {
     
     public function getAllDocuments() {
         try {
-            return $this->db->fetchAll("SELECT * FROM " . TABLE_DOCUMENTS . " ORDER BY doc_name ASC");
+            return $this->db->fetchAll("SELECT * FROM " . TABLE_DOCUMENTS . " ORDER BY name ASC");
         } catch (PDOException $e) {
             error_log("Get documents error: " . $e->getMessage());
             return [];

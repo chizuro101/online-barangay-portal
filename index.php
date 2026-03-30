@@ -24,6 +24,48 @@ $userObj = new User();
 
     <!-- Link for Bootstrap Icons -->
     <script src="https://kit.fontawesome.com/4aee20adf0.js" crossorigin="anonymous"></script>
+    
+    <style>
+        .register-modal-heading {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        #register-modal .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+        }
+        
+        #register-modal .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+        
+        #register-modal label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        #register-modal .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 0.5rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        #register-modal .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
 
     <script type="text/javascript">
 (function(d, eId) {
@@ -73,17 +115,9 @@ var gwtpstReady = function(){
     </div>
     <br><br>
 
-    <div class="container-fluid"> 
-
-    <div id="pst-container">
-<div>Philippine Standard Time:</div>
-<div id="pst-time"></div>
-<div><a href="https://gwhs.i.gov.ph/pst/" id="pst-source" target="_blank">PST Source</a></div>
-</div>
-
 
         <!-- Hero Area -->
-        <div class="row align-items-center justify-content-center m-0" id="heroarea" style="background-image: url('assets/images/barangay-bg-new.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 500px; position: relative; margin-top: 0;">
+        <div class="row align-items-center justify-content-center m-0" id="heroarea" style="background-image: url('assets/images/jm.jpg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 500px; position: relative; margin-top: 0;">
             <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
             <div class="col-md-8 col-sm-10" style="position: relative; z-index: 2; padding-top: 0;">
                 <h1 class="mt-0 mb-3 text-white">Barangay Sta. Cruz Viejo</h1>
@@ -204,9 +238,6 @@ var gwtpstReady = function(){
                         </tbody>
                     </table>
                 </div>
-                <div class="text-center mt-4">
-                    <a href="user/officials.php" class="btn btn-danger">View All Officials</a>
-                </div>
             </div>
         </div>
 
@@ -300,6 +331,10 @@ var gwtpstReady = function(){
                                         </div>
                                     </div>
                                     
+                                    <div class="text-center mt-3">
+                                        <p class="mb-0">Don't have an account? <a href="#" id="show-register" class="text-danger">Register here</a></p>
+                                    </div>
+                                    
                                     
                                 </form>
                             </div>
@@ -309,6 +344,150 @@ var gwtpstReady = function(){
                 </div>
             </div>
 
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="register-modal-heading">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title register-modal-heading" id="register-modal-heading">Resident Registration</h1>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="register-form" method="POST" action="admin_Actions.php">
+                        <input type="hidden" name="btn_add_resident" value="1">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reg_first_name">First Name *</label>
+                                    <input type="text" name="first_name_field" id="reg_first_name" class="form-control" placeholder="Enter First Name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reg_last_name">Last Name *</label>
+                                    <input type="text" name="last_name_field" id="reg_last_name" class="form-control" placeholder="Enter Last Name" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reg_middle_name">Middle Name</label>
+                                    <input type="text" name="middle_name_field" id="reg_middle_name" class="form-control" placeholder="Enter Middle Name">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="reg_suffix">Suffix</label>
+                                    <input type="text" name="suffix_field" id="reg_suffix" class="form-control" placeholder="Jr., Sr., etc.">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="reg_birthday">Birthday *</label>
+                                    <input type="date" name="birthday_field" id="reg_birthday" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_sex">Sex *</label>
+                                    <select name="sex_field" id="reg_sex" class="form-control" required>
+                                        <option value="">Select Sex</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_civil_stat">Civil Status *</label>
+                                    <select name="civil_stat_field" id="reg_civil_stat" class="form-control" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Single">Single</option>
+                                        <option value="Married">Married</option>
+                                        <option value="Widowed">Widowed</option>
+                                        <option value="Separated">Separated</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_voter_stat">Voter Status</label>
+                                    <select name="voter_stat_field" id="reg_voter_stat" class="form-control">
+                                        <option value="">Select Status</option>
+                                        <option value="Registered">Registered</option>
+                                        <option value="Not Registered">Not Registered</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_mobile">Mobile Number *</label>
+                                    <input type="tel" name="mobile_no_field" id="reg_mobile" class="form-control" placeholder="09XXXXXXXXX" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_email">Email Address</label>
+                                    <input type="email" name="email_field" id="reg_email" class="form-control" placeholder="Enter Email">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reg_religion">Religion</label>
+                                    <input type="text" name="religion_field" id="reg_religion" class="form-control" placeholder="Enter Religion">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reg_username">Username *</label>
+                                    <input type="text" name="username_field" id="reg_username" class="form-control" placeholder="Choose Username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="reg_password">Password *</label>
+                                    <input type="password" name="password_field" id="reg_password" class="form-control" placeholder="Choose Password" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="reg_alias">Alias/Nickname</label>
+                                    <input type="text" name="alias_field" id="reg_alias" class="form-control" placeholder="Enter Alias or Nickname">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-muted small">By registering, you agree to provide accurate information for barangay records.</p>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="btn_register">Register</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" id="back-to-login">Back to Login</button>
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- jQuery and Bootstrap JS -->
@@ -382,6 +561,19 @@ var gwtpstReady = function(){
 
                             }
 
+                            else if($.trim(data) ==="2")
+                            {
+                                Swal.fire
+                                ({
+                                    title: 'Login Success',
+                                    text: 'Captain Login',
+                                    icon: 'success'
+                                })
+
+                                setTimeout('window.location.href = "admin/dashboard.php"',2000);
+
+                            }
+
                             else
                             {
                                 Swal.fire
@@ -421,6 +613,59 @@ var gwtpstReady = function(){
             clear_modal();
             login();
             
+            // Handle modal switching
+            $('#show-register').click(function(e) {
+                e.preventDefault();
+                $('#login-modal').modal('hide');
+                $('#register-modal').modal('show');
+            });
+            
+            $('#back-to-login').click(function() {
+                $('#register-modal').modal('hide');
+                $('#login-modal').modal('show');
+            });
+            
+            // Handle registration form submission
+            $('#register-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: 'admin_Actions.php',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Registration successful! You can now login with your credentials.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#register-modal').modal('hide');
+                                    $('#login-modal').modal('show');
+                                    clear_modal();
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: response.message || 'Registration failed. Please try again.',
+                                icon: 'error'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Registration failed. Please try again.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+            
             // Fix modal accessibility issues
             $('#login-modal').on('show.bs.modal', function () {
                 // Remove aria-hidden from main content when modal opens
@@ -428,6 +673,12 @@ var gwtpstReady = function(){
             });
             
             $('#login-modal').on('hidden.bs.modal', function () {
+                // Clear form when modal closes
+                $(this).find("input,textarea,select").val('');
+                $(this).find("input[type=checkbox], input[type=radio]").prop("checked", "");
+            });
+            
+            $('#register-modal').on('hidden.bs.modal', function () {
                 // Clear form when modal closes
                 $(this).find("input,textarea,select").val('');
                 $(this).find("input[type=checkbox], input[type=radio]").prop("checked", "");

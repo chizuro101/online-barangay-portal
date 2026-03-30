@@ -4,8 +4,8 @@
 
 use function PHPSTORM_META\map;
 
-require_once '../config/config.php';
-require_once '../classes/User.php';
+require_once 'config/config.php';
+require_once 'classes/User.php';
 
 $userObj = new User();
 
@@ -27,16 +27,17 @@ if(isset($_POST['btn_add_resident']))
     $username = $_POST['username_field'];
     $password = $_POST['password_field'];
 
+    header('Content-Type: application/json');
 
     if($userObj->add_resident($first_name, $middle_name, $last_name, $suffix , $birthday , $alias , $sex , $civil_stat , $mobile_no , $email , $religion , $voter_stat, $username, $password))
         {
-            // echo "Successfully Added";
-            $userObj->redirect('residents.php?residentAdded');
+            echo json_encode(['success' => true, 'message' => 'Registration successful!']);
         }
     else
     {
-        echo "Error";
+        echo json_encode(['success' => false, 'message' => 'Registration failed. Please check your information and try again.']);
     }
+    exit();
 }
 
 //Add Official Data to Database when add button on the modal is pressed
@@ -993,8 +994,6 @@ if(isset($_POST['username_verify_official_button']))
 //Ajax Call for Login
 if(isset($_POST['current_username']) && isset($_POST['current_password']))
 {
-    session_start();
-
     $username = $_POST['current_username'];
     $password = $_POST['current_password'];
 

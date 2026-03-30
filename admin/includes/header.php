@@ -18,13 +18,13 @@ if ($_SESSION['user_type'] !== 'admin') {
 if (isset($_GET['logout'])) {
     $userObj = new User();
     $userObj->logout();
-    header("Location: " . ROOT_URL . "index.php");
+    header("Location: http://localhost/xampp/Online_Barangay_Portal-master/Online_Barangay_Portal-master");
     exit();
 }
 
 $userObj = new User();
 $isCaptain = $userObj->isCaptain();
-$currentUser = $_SESSION['session_login'];
+$currentUser = isset($_SESSION['session_login']) ? $_SESSION['session_login'] : null;
 
 ?>
 <!DOCTYPE html>
@@ -57,7 +57,7 @@ $currentUser = $_SESSION['session_login'];
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4 <?php echo $isCaptain ? 'navbar-captain' : 'bg-danger'; ?>">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4 <?php echo $isCaptain ? 'navbar-captain' : 'navbar-admin'; ?>">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -91,13 +91,13 @@ $currentUser = $_SESSION['session_login'];
                         <i class="fas fa-concierge-bell"></i> Services
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=appointments">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>appointments.php">
                             <i class="fas fa-calendar"></i> Appointments
                         </a>
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=requests">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>service_requests.php">
                             <i class="fas fa-clipboard-list"></i> Service Requests
                         </a>
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=complaints">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>complaints.php">
                             <i class="fas fa-exclamation-triangle"></i> Complaints
                         </a>
                     </div>
@@ -107,13 +107,13 @@ $currentUser = $_SESSION['session_login'];
                         <i class="fas fa-boxes"></i> Resources
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=inventory">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>inventory.php">
                             <i class="fas fa-warehouse"></i> Inventory
                         </a>
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=financial">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>financial.php">
                             <i class="fas fa-money-bill-wave"></i> Financial
                         </a>
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=projects">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>projects.php">
                             <i class="fas fa-project-diagram"></i> Projects
                         </a>
                     </div>
@@ -123,10 +123,10 @@ $currentUser = $_SESSION['session_login'];
                         <i class="fas fa-users"></i> Community
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=meetings">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>meetings.php">
                             <i class="fas fa-users"></i> Meetings
                         </a>
-                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>dashboard.php?action=notifications">
+                        <a class="dropdown-item" href="<?php echo ADMIN_URL; ?>notifications.php">
                             <i class="fas fa-bell"></i> Notifications
                         </a>
                     </div>
@@ -168,7 +168,7 @@ $currentUser = $_SESSION['session_login'];
             <span class="navbar-text mr-3">
                 <?php if ($isCaptain): ?>
                     <i class="fas fa-crown"></i> 
-                    <span class="badge badge-warning captain-badge">Barangay Captain</span>
+                    <span class="badge badge-captain">Barangay Captain</span>
                 <?php else: ?>
                     <i class="fas fa-user-tie"></i> Barangay Official
                 <?php endif; ?>
